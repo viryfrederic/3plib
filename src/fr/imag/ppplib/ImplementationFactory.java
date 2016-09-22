@@ -90,6 +90,22 @@ public class ImplementationFactory
         instance.cspInstance = impl;
     }
     
+    /** Provide a new instance of the choosen MatrixCalculator implementation.
+     ** @return the instance.
+     **/
+    public static MatrixCalculator getNewMatrixCalculator()
+    {
+        return instance.mcInstance.newInstance();
+    }
+    
+    /** Reset the implementation of the MatrixCalculator for future operations. It doesn't affect the previous MatrixCalculator instances.
+     ** @param impl the new implementation.
+     **/
+    public static void resetMatrixCalculator(MatrixCalculator impl)
+    {
+        instance.mcInstance = impl;
+    }
+    
     /* Constructor with default implementations (Apache Commons Math 3.6.1) */
     private ImplementationFactory() {}
     
@@ -98,4 +114,5 @@ public class ImplementationFactory
     private VectorCalculator vcInstance = new DefaultVectorCalculator();
     private ProjectionCalculator pcInstance = new DefaultProjectionCalculator(null, null);
     private ConvexSetProjector cspInstance = new MultithreadsConvexSetProjector();
+    private MatrixCalculator mcInstance = new DefaultMatrixCalculator();
 }

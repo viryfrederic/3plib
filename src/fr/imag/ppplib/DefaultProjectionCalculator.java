@@ -31,6 +31,7 @@ public class DefaultProjectionCalculator implements ProjectionCalculator
      ** @param p2 a vector.
      ** @exception ProjectionCalculatorException thrown if p1 and p2 don't live in the same vectorspace, p1 p2 are colinears, or one is zero.
      **/
+    // TODO Exception if p1p2 != 0 and ||p1|| != 1 or ||p2|| != 1
     public DefaultProjectionCalculator(double[] p1, double[] p2)
     {
         if (p1 == null || p2 == null)
@@ -68,30 +69,8 @@ public class DefaultProjectionCalculator implements ProjectionCalculator
         if (a.length != p1.length)
             throw new ProjectionCalculatorException(nsvsMessage);
         
-        /* initialization */
-        if (!initialized)
-        {
-            double p1p2 = vc.dotProduct(p1, p2);
-            double np1 = vc.norm(p1);
-            double np1sq = np1*np1;
-            invnp1 = 1/np1;
-            lambda = 0.0;
-            mu = 1/vc.norm(p2);
-            if (p1p2 != 0)
-            {
-                lambda = 1/(vc.norm(vc.difference(p1, vc.multiplyByScalar(np1sq/p1p2, p2))));
-                mu = -lambda*np1sq/p1p2;
-            }
-            q1 = vc.multiplyByScalar(invnp1, p1);
-            q2 = vc.sum(vc.multiplyByScalar(lambda, p1), vc.multiplyByScalar(mu, p2));
-            
-            initialized = true;
-        }
-        
         /* calculus and return */
-        double t1 = vc.dotProduct(a, q1);
-        double t2 = vc.dotProduct(a, q2);
-        return new double[] {t1*invnp1 + t2*lambda, t2*mu};
+        return new double[] {vc.dotProduct(a, p1), vc.dotProduct(a, p2)};
     }
     
     /** Give the nd representation of a which is in the plane defined by p1 and p2.
@@ -125,22 +104,13 @@ public class DefaultProjectionCalculator implements ProjectionCalculator
         if (emptyPC)
             throw new ProjectionCalculatorException(npaMessage);
         DefaultProjectionCalculator res = new DefaultProjectionCalculator(p1, p2);
-        res.invnp1 = invnp1;
-        res.lambda = lambda;
-        res.mu = mu;
-        res.q1 = q1;
-        res.q2 = q2;
-        res.initialized = true;
         return res;
     }
     
     private VectorCalculator vc = new DefaultVectorCalculator();
     private double[] p1;
     private double[] p2;
-    private double invnp1, lambda, mu;
-    private double[] q1, q2;
-    private boolean initialized = false;
-    private boolean emptyPC = false;
+    private boolean emptyPC = false; // Usefull (cf ImplementationFactory)
     private static final String nsvsMessage = "The given vector doesn't live in the same vectorspace than the plane.";
     private static final String nsvsp1p2Message = "Two different dimensions vectors cannot define a plane.";
     private static final String cp1p2Message = "Two colinears vectors cannot define a plane.";

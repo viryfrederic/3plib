@@ -21,30 +21,32 @@
 
 package fr.imag.ppplib;
 
-/** An implementation of the SupportFunction for the projection of a given set described by its SupportFunction. Given a convex set (by its SupportFunction) and a plane (2 vectors), it makes it possible to evaluate the support function of the projection of the convex set on the plane.
+/** An implementation of the SupportFunction for the linear transformation of a given set described by its SupportFunction. Given a convex set (by its SupportFunction) and a matrice, it makes it possible to evaluate the support function of the convex set transformed by the matrix.
  **/
 
-public class ProjectionSupportFunction implements SupportFunction
+public class MatrixSupportFunction implements SupportFunction
 {
+    /** Create a new MatrixSupportFunction, associated to a convex set and a linear transformation. The convex set is cloned.
+     ** @param convex a convex set given by its SupportFunction.
+     ** @param matrix a matrix.
+     ** @exception SupportFunctionException thrown if the convex set and the matrix are incompatible.
+     **/
+    public MatrixSupportFunction(SupportFunction convex, double[][] matrix)
+    {
+        if (convex.getDimension() != matrix[0].length)
+            throw new SupportFunctionException(nsvsMessage);
+        this.convex = convex.clone();
+        this.matrix = matrix;
+        mc = ImplementationFactory.getNewMatrixCalculator();
+        matrixT = mc.transpose(matrix);
+    }
+    
     /** Give the dimension of the vectorspace where lives the convex set described.
      ** @return the dimension.
      **/
     public int getDimension()
     {
-        return convex.getDimension();
-    }
-    
-    /** Create a new ProjectionSupportFunction, associated to a convex set and a plane. The convex set is cloned.
-     ** @param convex a convex set given by its SupportFunction.
-     ** @param pc a projection calculator, associated to a plane.
-     ** @exception SupportFunctionException thrown if the convex set and the plane are incompatible.
-     **/
-    public ProjectionSupportFunction(SupportFunction convex, ProjectionCalculator pc)
-    {
-        if (convex.getDimension() != pc.getDimension())
-            throw new SupportFunctionException(nsvsMessage);
-        this.convex = convex.clone();
-        this.pc = pc;
+        return matrix.length; // number of rows of the matrix
     }
     
     /** Evaluate the support function.
@@ -52,9 +54,9 @@ public class ProjectionSupportFunction implements SupportFunction
      **/
     public void evaluate(double[] dir)
     {
-        double[] dirnd = pc.toOriginalSpace(dir);
-        convex.evaluate(dirnd);
-        supportVector = pc.planarProjection(convex.getSupportVector());
+        double[] dTransformed = mc.multiply(matrixT, dir);
+        convex.evaluate(dTransformed);
+        supportVector = mc.multiply(matrix, convex.getSupportVector());
         supportValue = convex.getSupportValue();
         evaluated = true;
     }
@@ -86,22 +88,25 @@ public class ProjectionSupportFunction implements SupportFunction
      **/
     public SupportFunction clone()
     {
-        ProjectionSupportFunction res = new ProjectionSupportFunction();
+        MatrixSupportFunction res = new MatrixSupportFunction();
         res.convex = convex.clone();
-        res.pc = pc.clone();
+        res.mc = ImplementationFactory.getNewMatrixCalculator();
+        res.matrix = matrix; // TODO
+        res.matrixT = matrixT; // TODO
         res.supportVector = supportVector;
         res.supportValue = supportValue;
         res.evaluated = evaluated;
         return res;
     }
     
-    private ProjectionSupportFunction() {}
+    private MatrixSupportFunction() {}
     
+    private MatrixCalculator mc;
     private SupportFunction convex;
-    private ProjectionCalculator pc;
+    private double[][] matrix, matrixT;
     private double[] supportVector;
     private double supportValue;
     private boolean evaluated = false;
-    private static final String nsvsMessage = "The convex set and the plane don't live in the same vector space.";
+    private static final String nsvsMessage = "The convex set and the matrix are incompatible.";
     private static final String nyeMessage = "The support function has never been solved evaluated.";
 }

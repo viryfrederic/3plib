@@ -101,7 +101,7 @@ public class PolygonsViewer extends JFrame
                 }
                 x[n] = x[0];
                 y[n] = y[0];
-                g.drawPolyline(x, y, n+1);//TODO
+                //g.drawPolyline(x, y, n+1);//TODO
                 g.fillPolygon(x, y, n+1);
             }
             
