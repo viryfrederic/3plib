@@ -34,20 +34,17 @@ Keywords: planar projection, polyhedra, support function
 
 
 -----------------------------------------------------------------
-                     How to install 3plib ?
+                     How to compile 3plib ?
 -----------------------------------------------------------------
 
+Gradle has to be installed on your computer (see https://gradle.org/)
+
 Compile:
-    ./compile.sh
+    gradle build
 
-or:
-    # Library compilation
-    javac -cp release/lib/commons-math3-3.6.1.jar:compiled/classes/ -d compiled/classes src/fr/imag/ppplib/*.java -Xlint:unchecked
-    # JAR generation
-    jar cfm release/3plib.jar src/manifest/MANIFEST.MF -C compiled/classes/ .
-    # Documentation generation
-    javadoc -quiet -d release/doc src/fr/imag/ppplib/*.java -classpath release/lib/commons-math3-3.6.1.jar
+The .jar is in build/libs/
 
+Apache Commons Math 3.6.1 is needed for running. You can download it there: http://commons.apache.org/proper/commons-math/download_math.cgi
 
 
 -----------------------------------------------------------------
@@ -85,7 +82,7 @@ Java code:
 
 Compile and run:
     javac -cp 3plib.jar Test.java
-    java -cp .:3plib.jar Test
+    java -cp .:3plib.jar:commons-math3-3.6.1.jar Test
 
 
 
