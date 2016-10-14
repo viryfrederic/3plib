@@ -52,6 +52,11 @@ public interface LinearProgrammingSolver
      **/
     double getValue();
     
+    /** Give the chebyshev center of the polyhedron described by the constraint set.
+     ** @return the chebyshev center.
+     **/
+    double[] getChebyshevCenter();
+    
     /** Give a new instance whose the type is the same than the current LinearProgrammingSolver (can be usefull for multithreading).
      ** @return the new instance.
      **/

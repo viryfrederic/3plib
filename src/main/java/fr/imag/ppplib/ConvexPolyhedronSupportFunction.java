@@ -25,7 +25,7 @@ package fr.imag.ppplib;
  **/
 
 public class ConvexPolyhedronSupportFunction implements SupportFunction
-{
+{    
     /** Give the dimension of the vectorspace where lives the convex set described.
      ** @return the dimension.
      **/
@@ -41,6 +41,14 @@ public class ConvexPolyhedronSupportFunction implements SupportFunction
     public void addLinearConstraint(double[] a, double b)
     {
         lps.addLinearConstraint(a, b);
+    }
+    
+    /** Give the chebyshev center of this polyhedron.
+     ** @return the chebyshev center.
+     **/
+    public double[] getChebyshevCenter()
+    {
+        return lps.getChebyshevCenter();
     }
     
     /** Evaluate the support function.

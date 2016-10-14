@@ -106,6 +106,29 @@ public class ACMLinearProgrammingSolver implements LinearProgrammingSolver
         return value;
     }
     
+    /** Give the chebyshev center of the polyhedron described by the constraint set.
+     ** @return the chebyshev center.
+     **/
+    public double[] getChebyshevCenter()
+    {
+        LinearProgrammingSolver cp = new ACMLinearProgrammingSolver();
+        for (LinearConstraint lc : lcList)
+        {
+            double[] dir = lc.getCoefficients().toArray();
+            double[] dirp = new double[d+1];
+            for (int i = 0 ; i < d ; i++) dirp[i] = dir[i];
+            dir[d] = vc.norm(dir);
+            cp.addLinearConstraint(dirp, lc.getValue());
+        }
+        double[] dirRadius = new double[d+1];
+        dirRadius[d] = 1.0;
+        cp.solve(dirRadius);
+        double[] res = new double[d];
+        double[] resp = cp.getPoint();
+        for (int i = 0 ; i < d ; i++) res[i] = resp[i];
+        return res;
+    }
+    
     /** Give a new instance whose the type is the same than the current LinearProgrammingSolver (can be usefull for multithreading).
      ** @return the new instance.
      **/
@@ -133,6 +156,7 @@ public class ACMLinearProgrammingSolver implements LinearProgrammingSolver
     private List <LinearConstraint> lcList = new LinkedList <LinearConstraint>();
     private LinearConstraintSet lcSet;
     private SimplexSolver solver = new SimplexSolver();
+    private VectorCalculator vc = ImplementationFactory.getNewVectorCalculator();
     private double[] point;
     private double value;
     private boolean lcListModified = true;
