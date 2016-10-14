@@ -106,10 +106,9 @@ public class ACMLinearProgrammingSolver implements LinearProgrammingSolver
         return value;
     }
     
-    /** Give the chebyshev center of the polyhedron described by the constraint set.
-     ** @return the chebyshev center.
+    /** Compute the chebyshev center of this polyhedron.
      **/
-    public double[] getChebyshevCenter()
+    public void computeChebyshevCenter()
     {
         LinearProgrammingSolver cp = new ACMLinearProgrammingSolver();
         for (LinearConstraint lc : lcList)
@@ -126,7 +125,24 @@ public class ACMLinearProgrammingSolver implements LinearProgrammingSolver
         double[] res = new double[d];
         double[] resp = cp.getPoint();
         for (int i = 0 ; i < d ; i++) res[i] = resp[i];
-        return res;
+        cc = res;
+        cr = cp.getValue();
+    }
+    
+    /** Give the chebyshev center of this polyhedron.
+     ** @return the chebyshev center.
+     **/
+    public double[] getChebyshevCenter()
+    {
+        return cc;
+    }
+    
+    /** Give the chebyshev radius of this polyhedron.
+     ** @return the chebyshev radius.
+     **/
+    public double getChebyshevRadius()
+    {
+        return cr;
     }
     
     /** Give a new instance whose the type is the same than the current LinearProgrammingSolver (can be usefull for multithreading).
@@ -157,8 +173,8 @@ public class ACMLinearProgrammingSolver implements LinearProgrammingSolver
     private LinearConstraintSet lcSet;
     private SimplexSolver solver = new SimplexSolver();
     private VectorCalculator vc = ImplementationFactory.getNewVectorCalculator();
-    private double[] point;
-    private double value;
+    private double[] point, cc;
+    private double value, cr;
     private boolean lcListModified = true;
     private boolean evaluated = false;
     private static final String nyeMessage = "The linear program has never been solved.";

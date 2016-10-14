@@ -43,12 +43,27 @@ public class ConvexPolyhedronSupportFunction implements SupportFunction
         lps.addLinearConstraint(a, b);
     }
     
+    /** Compute the chebyshev center of this polyhedron.
+     **/
+    public void computeChebyshevCenter()
+    {
+        lps.computeChebyshevCenter();
+    }
+    
     /** Give the chebyshev center of this polyhedron.
      ** @return the chebyshev center.
      **/
     public double[] getChebyshevCenter()
     {
         return lps.getChebyshevCenter();
+    }
+    
+    /** Give the chebyshev radius of this polyhedron.
+     ** @return the chebyshev radius.
+     **/
+    public double getChebyshevRadius()
+    {
+        return lps.getChebyshevRadius();
     }
     
     /** Evaluate the support function.
