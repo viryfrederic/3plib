@@ -43,21 +43,25 @@ public class DefaultPolygon implements Polygon
         }
     }
     
-    /** Apply a homothety and after a translation on the vertices.
+    /** Apply a homothety.
      ** @param a the homothety coefficient.
-     ** @param b the translation vector.
-     ** @exception PolygonException thrown if b doesn't live in the plane.
      **/
-    public void transform(double a, double[] b)
+    public void scale(double a)
     {
-        if (b.length != 2)
+        int n = vertices.size();
+        for (int i = 0 ; i < n ; i++) vertices.set(i, vc.multiplyByScalar(a, vertices.get(i)));
+    }
+    
+    /** Apply a translation.
+     ** @param v the translation vector.
+     ** @exception PolygonException thrown if v doesn't live in the plane.
+     **/
+    public void translate(double[] v)
+    {
+        if (v.length != 2)
             throw new PolygonException(nitpMessage);
-        for (double[] v : vertices)
-        {
-            double[] vp = vc.sum(vc.multiplyByScalar(a, v), b);
-            v[0] = vp[0];
-            v[1] = vp[1];
-        }
+        int n = vertices.size();
+        for (int i = 0 ; i < n ; i++) vertices.set(i, vc.sum(v, vertices.get(i)));
     }
     
     /** Give a list of the vertices of the current polygon.

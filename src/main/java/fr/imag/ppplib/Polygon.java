@@ -33,11 +33,15 @@ public interface Polygon
      **/
     void addVertices(List <double[]> l);
     
-    /** Apply a homothety and after a translation on the vertices.
+    /** Apply a homothety.
      ** @param a the homothety coefficient.
-     ** @param b the translation vector.
      **/
-    void transform(double a, double[] b);
+    void scale(double a);
+    
+    /** Apply a translation.
+     ** @param v the translation vector.
+     **/
+    void translate(double[] v);
     
     /** Give a list of the vertices of the current polygon.
      ** @return the list.
