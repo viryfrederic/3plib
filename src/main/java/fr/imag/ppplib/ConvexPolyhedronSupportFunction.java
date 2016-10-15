@@ -21,6 +21,8 @@
 
 package fr.imag.ppplib;
 
+import java.util.List;
+
 /** An implementation of the SupportFunction for a convex polyhedron in H-representation.
  **/
 
@@ -64,6 +66,22 @@ public class ConvexPolyhedronSupportFunction implements SupportFunction
     public double getChebyshevRadius()
     {
         return lps.getChebyshevRadius();
+    }
+    
+    /** Give the list of directions.
+     ** @return the list.
+     **/
+    public List <double[]> getDirections()
+    {
+        return lps.getDirections();
+    }
+    
+    /** Give the list of values (constraints).
+     ** @return the list.
+     **/
+    public List <Double> getValues()
+    {
+        return lps.getValues();
     }
     
     /** Evaluate the support function.

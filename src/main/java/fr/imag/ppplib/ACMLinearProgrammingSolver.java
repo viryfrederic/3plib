@@ -30,7 +30,7 @@ import org.apache.commons.math3.optim.linear.SimplexSolver;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 
 import java.util.List;
-import java.util.LinkedList;
+import java.util.ArrayList;
 
 /** An implementation of the linear programming solver using the linear programming module of Apache Commons Math.
  **/
@@ -53,13 +53,14 @@ public class ACMLinearProgrammingSolver implements LinearProgrammingSolver
     public void addLinearConstraint(double[] a, double b)
     {
         /* The first linear constraint determines the dimension */
-        if (lcList.isEmpty ())
+        if (dirList.isEmpty())
             d = a.length;
         /* The nexts have to be controlled */
         else if (a.length != d)
             throw new LinearProgrammingSolverException(ddconstMessage);
         /* Update the list and the flag */
-        lcList.add(new LinearConstraint(a, Relationship.LEQ, b));
+        dirList.add(a);
+        valList.add(b);
         lcListModified = true;
     }
     
@@ -74,7 +75,12 @@ public class ACMLinearProgrammingSolver implements LinearProgrammingSolver
             throw new LinearProgrammingSolverException(dddirMessage);
         /* Update the constraints set of the simplex solver if modification */
         if (lcListModified)
+        {
+            List <LinearConstraint> lcList = new ArrayList <LinearConstraint>();
+            int n = dirList.size();
+            for (int i = 0 ; i < n ; i++) lcList.add(new LinearConstraint(dirList.get(i), Relationship.LEQ, valList.get(i)));
             lcSet = new LinearConstraintSet(lcList);
+        }
         /* Evaluation */
         PointValuePair res = solver.optimize(new LinearObjectiveFunction(dir, 0), lcSet, GoalType.MAXIMIZE);
         /* Update the results and the flags */
@@ -111,13 +117,14 @@ public class ACMLinearProgrammingSolver implements LinearProgrammingSolver
     public void computeChebyshevCenter()
     {
         LinearProgrammingSolver cp = new ACMLinearProgrammingSolver();
-        for (LinearConstraint lc : lcList)
+        int n = dirList.size();
+        for (int j = 0 ; j < n ; j++)
         {
-            double[] dir = lc.getCoefficients().toArray();
+            double[] dir = dirList.get(j);
             double[] dirp = new double[d+1];
             for (int i = 0 ; i < d ; i++) dirp[i] = dir[i];
-            dirp[d] = vc.norm(dir); // TODO NULL POINTER EXCEPTION ICI !!!
-            cp.addLinearConstraint(dirp, lc.getValue());
+            dirp[d] = vc.norm(dir);
+            cp.addLinearConstraint(dirp, valList.get(j));
         }
         double[] dirRadius = new double[d+1];
         dirRadius[d] = 1.0;
@@ -145,6 +152,22 @@ public class ACMLinearProgrammingSolver implements LinearProgrammingSolver
         return cr;
     }
     
+    /** Give the list of directions.
+     ** @return the list.
+     **/
+    public List <double[]> getDirections()
+    {
+        return dirList;
+    }
+    
+    /** Give the list of values (constraints).
+     ** @return the list.
+     **/
+    public List <Double> getValues()
+    {
+        return valList;
+    }
+    
     /** Give a new instance whose the type is the same than the current LinearProgrammingSolver (can be usefull for multithreading).
      ** @return the new instance.
      **/
@@ -159,19 +182,18 @@ public class ACMLinearProgrammingSolver implements LinearProgrammingSolver
     public LinearProgrammingSolver clone()
     {
         ACMLinearProgrammingSolver res = new ACMLinearProgrammingSolver();
-        /* Copy lcList */
-        List <LinearConstraint> newLcList = new LinkedList <LinearConstraint>();
-        newLcList.addAll(lcList);
         /* Update and return */
-        res.lcList = newLcList;
+        res.dirList = dirList;
+        res.valList = valList;
         res.d = d;
         res.vc = ImplementationFactory.getNewVectorCalculator();
         return res;
     }
     
     private int d;
-    private List <LinearConstraint> lcList = new LinkedList <LinearConstraint>();
     private LinearConstraintSet lcSet;
+    private List <double[]> dirList = new ArrayList <double[]>();
+    private List <Double> valList = new ArrayList <Double>();
     private SimplexSolver solver = new SimplexSolver();
     private VectorCalculator vc = ImplementationFactory.getNewVectorCalculator();
     private double[] point, cc;

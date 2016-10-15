@@ -21,6 +21,8 @@
 
 package fr.imag.ppplib;
 
+import java.util.List;
+
 /** Interface that represents a linear programming solver for maximization in a convex polyhedron. This polyhedron is given in H-representation: a_i.x <= b_i, with {a_i} vectors and {b_i} scalars.
  **/
 
@@ -60,6 +62,16 @@ public interface LinearProgrammingSolver
      ** @return the chebyshev center.
      **/
     double[] getChebyshevCenter();
+    
+    /** Give the list of directions.
+     ** @return the list.
+     **/
+    List <double[]> getDirections();
+    
+    /** Give the list of values (constraints).
+     ** @return the list.
+     **/
+    List <Double> getValues();
     
     /** Give the chebyshev radius of this polyhedron.
      ** @return the chebyshev radius.
