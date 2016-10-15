@@ -31,6 +31,8 @@ public class ImplementationFactory
      **/
     public static LinearProgrammingSolver getNewLinearProgrammingSolver()
     {
+        if (instance.lpsInstance == null)
+            instance.lpsInstance = new ACMLinearProgrammingSolver();
         return instance.lpsInstance.newInstance();
     }
     
@@ -47,6 +49,8 @@ public class ImplementationFactory
      **/
     public static VectorCalculator getNewVectorCalculator()
     {
+        if (instance.vcInstance == null)
+            instance.vcInstance = new DefaultVectorCalculator();
         return instance.vcInstance.newInstance();
     }
     
@@ -63,6 +67,8 @@ public class ImplementationFactory
      **/
     public static ProjectionCalculator getNewProjectionCalculator(double[] p1, double[] p2)
     {
+        if (instance.pcInstance == null)
+            instance.pcInstance = new DefaultProjectionCalculator(null, null);
         return instance.pcInstance.newInstance(p1, p2);
     }
     
@@ -79,6 +85,8 @@ public class ImplementationFactory
      **/
     public static ConvexSetProjector getNewConvexSetProjector()
     {
+        if (instance.cspInstance == null)
+            instance.cspInstance = new MultithreadsConvexSetProjector();
         return instance.cspInstance.newInstance();
     }
     
@@ -95,6 +103,8 @@ public class ImplementationFactory
      **/
     public static MatrixCalculator getNewMatrixCalculator()
     {
+        if (instance.mcInstance == null)
+            instance.mcInstance = new DefaultMatrixCalculator();
         return instance.mcInstance.newInstance();
     }
     
@@ -110,9 +120,9 @@ public class ImplementationFactory
     private ImplementationFactory() {}
     
     private static ImplementationFactory instance = new ImplementationFactory();
-    private LinearProgrammingSolver lpsInstance = new ACMLinearProgrammingSolver();
-    private VectorCalculator vcInstance = new DefaultVectorCalculator();
-    private ProjectionCalculator pcInstance = new DefaultProjectionCalculator(null, null);
-    private ConvexSetProjector cspInstance = new MultithreadsConvexSetProjector();
-    private MatrixCalculator mcInstance = new DefaultMatrixCalculator();
+    private VectorCalculator vcInstance;
+    private LinearProgrammingSolver lpsInstance;
+    private ProjectionCalculator pcInstance;
+    private ConvexSetProjector cspInstance;
+    private MatrixCalculator mcInstance;
 }

@@ -36,7 +36,7 @@ import java.util.LinkedList;
  **/
 
 public class ACMLinearProgrammingSolver implements LinearProgrammingSolver
-{
+{    
     /** Give the dimension of the vectorspace where lives the convex set described.
      ** @return the dimension.
      **/
@@ -116,7 +116,7 @@ public class ACMLinearProgrammingSolver implements LinearProgrammingSolver
             double[] dir = lc.getCoefficients().toArray();
             double[] dirp = new double[d+1];
             for (int i = 0 ; i < d ; i++) dirp[i] = dir[i];
-            dir[d] = vc.norm(dir);
+            dirp[d] = vc.norm(dir); // TODO NULL POINTER EXCEPTION ICI !!!
             cp.addLinearConstraint(dirp, lc.getValue());
         }
         double[] dirRadius = new double[d+1];
@@ -165,6 +165,7 @@ public class ACMLinearProgrammingSolver implements LinearProgrammingSolver
         /* Update and return */
         res.lcList = newLcList;
         res.d = d;
+        res.vc = ImplementationFactory.getNewVectorCalculator();
         return res;
     }
     
