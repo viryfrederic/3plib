@@ -22,47 +22,32 @@
 package fr.imag.ppplib.io.gui;
 
 import javax.swing.ImageIcon;
-import java.util.Vector;
+import java.util.Map;
+import java.util.HashMap;
 
 class IconManager
 {
 	private IconManager ()
 	{
-		icons = new Vector <IconStruct> ();
+		icons = new HashMap<String, ImageIcon>();
 	}
 	
-	public static IconManager getInstance ()
+	public static IconManager getInstance()
 	{
 		return INSTANCE;
 	}
 
-	public ImageIcon getIcon (String name)
+	public ImageIcon getIcon(String name)
 	{
-		int index = getIndex (name);
-		if (index == icons.size ())
-			icons.add (new IconStruct (name));
-		return icons.elementAt (index).icon;
+        ImageIcon res = icons.get(name);
+        if (res == null)
+        {
+            res = new ImageIcon(IconManager.class.getResource(name));
+	        icons.put(name, res);
+        }
+        return res;
 	}
 	
-	private int getIndex (String name)
-	{
-		int i = 0;
-		while (i < icons.size () && icons.elementAt (i).name != name) i++;
-		return i;
-	}
-	
-	class IconStruct
-	{
-		public IconStruct (String s)
-		{
-			icon = new ImageIcon (s);
-			name = s;
-		}
-
-		public String name;
-		public ImageIcon icon;
-	}
-	
-	private static IconManager INSTANCE = new IconManager ();
-	private static Vector <IconStruct> icons;
+	private static IconManager INSTANCE = new IconManager();
+	private static Map<String, ImageIcon> icons;
 }
