@@ -1,4 +1,4 @@
-/** Polygonal Planar Projection LIBrary (3plib) v0.1.0
+/** Polygonal Planar Projection LIBrary (3plib) v0.2.0
  ** Copyright © 2016 Frédéric Viry
  ** author: Frédéric Viry (Laboratoire Verimag, Grenoble, France)
  ** mail: ask3plib@gmail.com
@@ -29,37 +29,93 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.ComponentListener;
 import javax.swing.JPanel;
+import javax.swing.JToolBar;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.Graphics;
-import java.awt.Dimension;
 import java.awt.Color;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import java.util.List;
-import java.util.LinkedList;
+import javax.swing.JFileChooser;
 
-/** Class that represents a viewer for polygons.
+/** Class that represents the viewer of polyhedra.
  **/
 
-public class PolygonsViewer extends JFrame 
+public class View extends JFrame 
 {
-    /** Create a new PolygonsViewer
+    private ViewerOperations vo = new ViewerOperations();
+    private PolygonsPane pp = new PolygonsPane();
+    private List<Polygon> innerPoly, outerPoly;
+    private Controller controller;
+    
+    /** Create a new View.
      **/
-    public PolygonsViewer()
+    public View(Controller controller)
     {
         this.setSize(800, 600);
+        this.setTitle("3PLIB's Polyhedra Viewer");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setContentPane(pp);
+        getContentPane().setLayout(new BorderLayout());
+        getContentPane().add(new SettingsPane(), BorderLayout.NORTH);
+        getContentPane().add(pp, BorderLayout.CENTER);
         this.setVisible(true);
+        this.controller = controller;
     }
     
-    /** Add a list of polygons to the view.
+    /** Update the list of inner polygons and outer polygons.
      **/
-    public void addPolygons (List <Polygon> polys)
+    public void update(List<Polygon> innerPoly, List<Polygon> outerPoly)
     {
-        lPolys.addAll(polys);
+        this.innerPoly = innerPoly;
+        this.outerPoly = outerPoly;
         pp.repaint();
+    }
+    
+    private class SettingsPane extends JToolBar implements ActionListener
+    {
+        private Button openButton = new Button("rsc/icons/open");
+        private Button saveButton = new Button("rsc/icons/save");
+        private Button selectPlaneButton = new Button("rsc/icons/select_plane");
+        private final JFileChooser fc = new JFileChooser();
+        
+        public SettingsPane()
+        {
+            super(JToolBar.HORIZONTAL);
+            this.setLayout(new FlowLayout(FlowLayout.CENTER));
+            this.setOpaque (false);
+		    this.setFloatable (false);
+            this.setBackground(new Color(238, 238, 238));
+            this.add(openButton);
+            this.add(saveButton);
+            this.add(selectPlaneButton);
+            openButton.addActionListener(this);
+            saveButton.addActionListener(this);
+            selectPlaneButton.addActionListener(this);            
+        }
+        
+        @Override
+        public void actionPerformed(ActionEvent e)
+        {
+            if (e.getSource() == openButton)
+            {
+                int val = fc.showOpenDialog(this);
+                if (val == JFileChooser.APPROVE_OPTION)
+                    controller.open(fc.getSelectedFile().getPath());
+            }
+            else if (e.getSource() == saveButton)
+            {
+                // TODO toImplement
+            }
+            else if (e.getSource() == selectPlaneButton)
+            {
+                // TODO toImplement
+            }
+        }
     }
     
     /* The class which manages the polygons drawing and the inputs. */
@@ -87,23 +143,47 @@ public class PolygonsViewer extends JFrame
             
             /* Draw polygons */
             super.paintComponent(g);
-            g.setColor(Color.RED);
-            for (Polygon p : lPolys)
+            if (outerPoly != null)
             {
-                List <double[]> l = p.getVertices();
-                int n = l.size();
-                int[] x = new int[n + 1];
-                int[] y = new int[n + 1];
-                int i = 0;
-                for (double[] v : l)
+                g.setColor(Color.RED);
+                for (Polygon p : outerPoly)
                 {
-                    x[i] = (int)(scale*(v[0] + translation[0])) + w/2;
-                    y[i] = h/2 - (int)(scale*(v[1] - translation[1]));
-                    i++;
+                    List <double[]> l = p.getVertices();
+                    int n = l.size();
+                    int[] x = new int[n + 1];
+                    int[] y = new int[n + 1];
+                    int i = 0;
+                    for (double[] v : l)
+                    {
+                        x[i] = (int)(scale*(v[0] + translation[0])) + w/2;
+                        y[i] = h/2 - (int)(scale*(v[1] - translation[1]));
+                        i++;
+                    }
+                    x[n] = x[0];
+                    y[n] = y[0];
+                    g.fillPolygon(x, y, n+1);
                 }
-                x[n] = x[0];
-                y[n] = y[0];
-                g.fillPolygon(x, y, n+1);
+            }
+            if (innerPoly != null)
+            {
+                g.setColor(Color.BLUE);
+                for (Polygon p : innerPoly)
+                {
+                    List <double[]> l = p.getVertices();
+                    int n = l.size();
+                    int[] x = new int[n + 1];
+                    int[] y = new int[n + 1];
+                    int i = 0;
+                    for (double[] v : l)
+                    {
+                        x[i] = (int)(scale*(v[0] + translation[0])) + w/2;
+                        y[i] = h/2 - (int)(scale*(v[1] - translation[1]));
+                        i++;
+                    }
+                    x[n] = x[0];
+                    y[n] = y[0];
+                    g.fillPolygon(x, y, n+1);
+                }
             }
             
             /* Reset mouse values. */
@@ -169,8 +249,4 @@ public class PolygonsViewer extends JFrame
         private int h = 0;
         private int w = 0;
     }
-    
-    private ViewerOperations vo = new ViewerOperations();
-    private PolygonsPane pp = new PolygonsPane();
-    private List <Polygon> lPolys = new LinkedList <Polygon>();
 }
