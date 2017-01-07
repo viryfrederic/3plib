@@ -39,6 +39,7 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 
 import java.util.List;
 import javax.swing.JFileChooser;
@@ -78,9 +79,9 @@ public class View extends JFrame
     
     private class SettingsPane extends JToolBar implements ActionListener
     {
-        private Button openButton = new Button("rsc/icons/open");
-        private Button saveButton = new Button("rsc/icons/save");
-        private Button selectPlaneButton = new Button("rsc/icons/select_plane");
+        private Button openButton = new Button("/fr/imag/ppplib/icons/open");
+        private Button saveButton = new Button("/fr/imag/ppplib/icons/save");
+        private Button selectPlaneButton = new Button("/fr/imag/ppplib/icons/select_plane");
         private final JFileChooser fc = new JFileChooser();
         
         public SettingsPane()
