@@ -52,11 +52,11 @@ public class View extends JFrame
     private ViewerOperations vo = new ViewerOperations();
     private PolygonsPane pp = new PolygonsPane();
     private List<Polygon> innerPoly, outerPoly;
-    private Controller controller;
+    private PolygonsViewer pv;
     
     /** Create a new View.
      **/
-    public View(Controller controller)
+    public View(PolygonsViewer pv)
     {
         this.setSize(800, 600);
         this.setTitle("3PLIB's Polyhedra Viewer");
@@ -65,7 +65,7 @@ public class View extends JFrame
         getContentPane().add(new SettingsPane(), BorderLayout.NORTH);
         getContentPane().add(pp, BorderLayout.CENTER);
         this.setVisible(true);
-        this.controller = controller;
+        this.pv = pv;
     }
     
     /** Update the list of inner polygons and outer polygons.
@@ -106,7 +106,7 @@ public class View extends JFrame
             {
                 int val = fc.showOpenDialog(this);
                 if (val == JFileChooser.APPROVE_OPTION)
-                    controller.open(fc.getSelectedFile().getPath());
+                    pv.open(fc.getSelectedFile().getPath());
             }
             else if (e.getSource() == saveButton)
             {

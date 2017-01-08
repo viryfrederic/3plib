@@ -31,10 +31,10 @@ import fr.imag.ppplib.calc.ProjectionCalculator;
 import java.util.List;
 import java.util.ArrayList;
 
-/** Class that represents the controller of the viewer.
+/** Main class of the viewer.
  **/
 
-public class Controller
+public class PolygonsViewer
 {
     /* View */
     private View view;
@@ -51,7 +51,7 @@ public class Controller
 
     /** Construct a new view 
      **/
-    public Controller()
+    public PolygonsViewer()
     {
         view = new View(this);
     }
