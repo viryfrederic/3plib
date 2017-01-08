@@ -83,7 +83,13 @@ public class LinearInterpolationPolygonalProjector implements PolygonalProjector
     {
         return upp.getOuterPolygons();
     }
-    
+
+    @Override
+    public boolean existResults()
+    {
+        return upp.existResults();
+    }
+
     private UnionPolygonalProjector upp;
 }
 

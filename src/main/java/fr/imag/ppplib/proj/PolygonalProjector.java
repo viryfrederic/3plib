@@ -49,4 +49,9 @@ public interface PolygonalProjector
      ** @return the list of outer polygons.
      **/
     List <Polygon> getOuterPolygons();
+
+    /** State if there exist results.
+     ** @return the statement.
+     **/
+    boolean existResults();
 }

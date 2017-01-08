@@ -106,6 +106,12 @@ public class UnionPolygonalProjector implements PolygonalProjector
             throw new PolygonalProjectorException(nyeMessage);
         return outerPolygons;
     }
+
+    @Override
+    public boolean existResults()
+    {
+        return evaluated;
+    }
     
     private List <Polygon> innerPolygons;
     private List <Polygon> outerPolygons;
