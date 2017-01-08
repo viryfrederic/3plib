@@ -39,10 +39,10 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URL;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 import java.util.List;
-import javax.swing.JFileChooser;
 
 /** Class that represents the viewer of polyhedra.
  **/
@@ -110,7 +110,16 @@ public class View extends JFrame
             }
             else if (e.getSource() == saveButton)
             {
-                // TODO toImplement
+                if (pv.existResults())
+                {
+                    int val = fc.showSaveDialog(this);
+                    if (val == JFileChooser.APPROVE_OPTION)
+                        pv.save(fc.getSelectedFile().getPath());
+                }
+                else
+                {
+                    JOptionPane.showMessageDialog(this, "No results are available to export yet.", "Export Warning", JOptionPane.WARNING_MESSAGE);
+                }
             }
             else if (e.getSource() == selectPlaneButton)
             {

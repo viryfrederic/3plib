@@ -26,6 +26,7 @@ import fr.imag.ppplib.proj.plg.Polygon;
 import fr.imag.ppplib.calc.ImplementationFactory;
 import fr.imag.ppplib.calc.sf.SupportFunction;
 import fr.imag.ppplib.io.files.PolyhedraReader;
+import fr.imag.ppplib.io.files.XMLOutput;
 import fr.imag.ppplib.calc.ProjectionCalculator;
 
 import java.util.List;
@@ -45,6 +46,9 @@ public class PolygonsViewer
     private double err;
     private List<SupportFunction> data;
 
+    /* Projector */
+    PolygonalProjector pp = new UnionPolygonalProjector(true);
+
     /* Output */
     private List<Polygon> outerPoly;
     private List<Polygon> innerPoly;
@@ -58,7 +62,7 @@ public class PolygonsViewer
 
     /** Open a new polyhedra file, and compute the projection on the plane given by (1, 0, ..., 0) (0, 1, 0, ..., 0), with an error of 20%.
      ** @param fileName the file name.
-     ** @exception NoDataException
+     ** @exception ViewerException when the data file is empty
      **/
     public void open(String fileName)
     {
@@ -77,6 +81,14 @@ public class PolygonsViewer
         v2[1] = 1.0;
         err = 0.2;
         computeNewProjection();
+    }
+
+    /** Save results of the projection in a XML file.
+     ** @param fileName the fileName.
+     **/
+    public void save(String fileName)
+    {
+        new XMLOutput().createXML(fileName, pp);
     }
 
     /** Change the settings of the projection.
@@ -98,10 +110,17 @@ public class PolygonsViewer
     private void computeNewProjection()
     {
         ProjectionCalculator pc = ImplementationFactory.getNewProjectionCalculator(v1, v2);
-        PolygonalProjector pp = new UnionPolygonalProjector(true);
         pp.computeProjection(data, pc, ErrorType.RELATIVE, err);
         outerPoly = pp.getOuterPolygons();
         innerPoly = pp.getInnerPolygons();
         view.update(innerPoly, outerPoly);
+    }
+
+    /** State if results exist.
+     ** @return the statement.
+     **/
+    public boolean existResults()
+    {
+        return pp.existResults();
     }
 }
